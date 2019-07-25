@@ -6,7 +6,7 @@
 #include "TGeoShape.h"
 #include "TGeoMatrix.h"
 
-#include "DetDescr/HcalDetectorGeometry.h" //for BoundingBox
+#include "DetDescr/DetectorGeometry.h" //for BoundingBox
 
 #include "TVector3.h"
 #include <math.h>
@@ -32,6 +32,17 @@ namespace ldmx {
                 hexPrism->SetTransMatrix(*locAndOrien);
 
                 return hexPrism;
+            }
+
+            
+            TEveGeoShape* drawHexPrism(HexPrism prism, Double_t xRot, Double_t yRot, Double_t zRot, Int_t color, Int_t transparency, TString name) {
+
+                return drawHexPrism(
+                            prism.x , prism.y , prism.z,
+                            xRot , yRot , zRot ,
+                            prism.height , prism.radius ,
+                            color , transparency , name
+                        );
             }
 
             TEveGeoShape* drawRectPrism(Double_t xPos, Double_t yPos, Double_t zPos, Double_t dX, Double_t dY, Double_t dZ, Double_t xRot, Double_t yRot, Double_t zRot, Int_t color, Int_t transparency, TString name) {

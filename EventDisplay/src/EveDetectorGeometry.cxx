@@ -1,8 +1,8 @@
-#include "EventDisplay/DetectorGeometry.h"
+#include "EventDisplay/EveDetectorGeometry.h"
 
 namespace ldmx {
 
-    DetectorGeometry::DetectorGeometry() {
+    EveDetectorGeometry::EveDetectorGeometry() {
 
         hcal_ = new TEveElementList("HCAL");
         sidehcal_ = new TEveElementList("Side HCAL");
@@ -18,14 +18,17 @@ namespace ldmx {
 
     }
 
-    void DetectorGeometry::drawECAL() {
+    void EveDetectorGeometry::drawECAL() {
 
 
-        for (int col = 0; col < towerXPos.size(); ++col) {
+        for (int col = 0; col < 7; ++col) {
     
             TString colName;
             colName.Form("Tower %d", col);
-            TEveGeoShape* hexCol = shapeDrawer_->drawHexPrism(towerXPos[col], towerYPos[col], ecal_front_z+ecal_z_length/2, 0, 0, 0, ecal_z_length, ecal_xy/(3*sqrt(3)), kBlue, 90, colName);
+            TEveGeoShape* hexCol = shapeDrawer_->drawHexPrism(
+                    DETECTOR_GEOMETRY.getHexPrism( col ),
+                    0, 0, 0, 
+                    kBlue, 90, colName);
 
             ecal_->AddElement(hexCol);
         }
@@ -33,33 +36,33 @@ namespace ldmx {
         detector_->AddElement(ecal_);
     }
 
-    void DetectorGeometry::drawHCAL() {
+    void EveDetectorGeometry::drawHCAL() {
     
         TEveGeoShape* backHcal = shapeDrawer_->drawRectPrism(
-                HCAL_DETECTOR_GEOMETRY.getBoundingBox( HcalSection::BACK ),
+                DETECTOR_GEOMETRY.getBoundingBox( HcalSection::BACK ),
                 0, 0, 0, kCyan, 90, "Back HCal"); 
         hcal_->AddElement(backHcal);
     
         TEveGeoShape* sideTopHcal = shapeDrawer_->drawRectPrism(
-                HCAL_DETECTOR_GEOMETRY.getBoundingBox( HcalSection::TOP ),
+                DETECTOR_GEOMETRY.getBoundingBox( HcalSection::TOP ),
                 0, 0, 0, kCyan, 90, "Module 1");
 
         sidehcal_->AddElement(sideTopHcal);
     
         TEveGeoShape* sideBottomHcal = shapeDrawer_->drawRectPrism(
-                HCAL_DETECTOR_GEOMETRY.getBoundingBox( HcalSection::BOTTOM ),
+                DETECTOR_GEOMETRY.getBoundingBox( HcalSection::BOTTOM ),
                 0, 0, 0, kCyan, 90, "Module 4");
 
         sidehcal_->AddElement(sideBottomHcal);
     
         TEveGeoShape* sideLeftHcal = shapeDrawer_->drawRectPrism(
-                HCAL_DETECTOR_GEOMETRY.getBoundingBox( HcalSection::LEFT ),
+                DETECTOR_GEOMETRY.getBoundingBox( HcalSection::LEFT ),
                 0, 0, 0, kCyan, 90, "Module 2");
 
         sidehcal_->AddElement(sideLeftHcal);
     
         TEveGeoShape* sideRightHcal = shapeDrawer_->drawRectPrism(
-                HCAL_DETECTOR_GEOMETRY.getBoundingBox( HcalSection::RIGHT ),
+                DETECTOR_GEOMETRY.getBoundingBox( HcalSection::RIGHT ),
                 0, 0, 0, kCyan, 90, "Module 3");
 
         sidehcal_->AddElement(sideRightHcal);
@@ -68,7 +71,7 @@ namespace ldmx {
         detector_->AddElement(hcal_);
     }
     
-    void DetectorGeometry::drawRecoilTracker() {
+    void EveDetectorGeometry::drawRecoilTracker() {
     
         for (int j = 0; j < 4; ++j) {
     

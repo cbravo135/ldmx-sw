@@ -12,7 +12,7 @@ namespace ldmx {
         TGLViewer* viewer = manager_->GetDefaultGLViewer();
         viewer->UseLightColorSet();
 
-        theDetector_ = new DetectorGeometry();
+        theDetector_ = new EveDetectorGeometry();
         eventObjects_ = new EventObjects();
 
         manager_->AddEvent(new TEveEventManager("LDMX Detector", ""));

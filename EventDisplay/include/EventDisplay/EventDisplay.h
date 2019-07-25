@@ -18,7 +18,7 @@
 #include "TEveViewer.h"
 
 #include "EventDisplay/EventObjects.h"
-#include "EventDisplay/DetectorGeometry.h"
+#include "EventDisplay/EveDetectorGeometry.h"
 
 #include <iostream>
 
@@ -122,7 +122,7 @@ namespace ldmx {
             TString ecalSimParticlesCollName_ = "EcalScoringPlaneHits_sim";
             TString eventTreeName_ = "LDMX_Events";
 
-            DetectorGeometry* theDetector_{nullptr};
+            EveDetectorGeometry* theDetector_{nullptr};
             EventObjects* eventObjects_{nullptr};
 
             TGTextEntry* textBox1_;

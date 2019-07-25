@@ -116,15 +116,10 @@ namespace ldmx {
         std::sort(hitVec.begin(), hitVec.end(), compEcalHits);
 
         for (int i = 0; i < hitVec.size(); i++) {
-            double energy = hitVec[i]->getEnergy();
-            if (energy == 0) { continue; }
 
-            unsigned int hitID = hitVec[i]->getID();
-            unsigned int cellID = hitID>>15;
-            unsigned int moduleID = (hitID<<17)>>29;
-            int layer = hitVec[i]->getLayer();
-            unsigned int combinedID = 10*cellID + moduleID;
-            std::pair<double, double> xyPos = hexReadout_->getCellCenterAbsolute(combinedID);
+            double energy = hitVec[i]->getEnergy();
+
+            if (energy == 0) { continue; }
 
             TString digiName;
             digiName.Form("%1.5g MeV", energy);
@@ -133,7 +128,11 @@ namespace ldmx {
             TColor* aColor = new TColor();
             Int_t color = aColor->GetColor((Int_t)rgb[0], (Int_t)rgb[1], (Int_t)rgb[2]);
 
-            TEveGeoShape* ecalDigiHit = drawer_->drawHexPrism(xyPos.first, xyPos.second, layerZPos[layer]+ecal_front_z, 0, 0, 0, 3, 4.47, color, 0, digiName);
+            TEveGeoShape* ecalDigiHit = drawer_->drawHexPrism(
+                    DETECTOR_GEOMETRY.getHexPrism( hitVec[i] ),
+                    0, 0, 0, 
+                    color, 0, digiName);
+
             ecalHits_->AddElement(ecalDigiHit);
         }
 
@@ -173,7 +172,7 @@ namespace ldmx {
             TString digiName;
             digiName.Form("%d PEs, Section %d, Layer %d, Bar %d, Z %1.5g", pe, section, layer, bar, hitVec[i]->getZ());
 
-            BoundingBox hcal_hit_bb = HCAL_DETECTOR_GEOMETRY.getBoundingBox( hitVec[i] );
+            BoundingBox hcal_hit_bb = DETECTOR_GEOMETRY.getBoundingBox( hitVec[i] );
             TEveGeoShape *hcalDigiHit = drawer_->drawRectPrism(
                     hcal_hit_bb ,
                     0, 0, 0, color, 0, digiName );
@@ -266,15 +265,15 @@ namespace ldmx {
                 unsigned int cellID = clusterHitIDs[iHit]>>15;
                 unsigned int moduleID = (clusterHitIDs[iHit]<<17)>>29;
                 int layer = (clusterHitIDs[iHit]<<20)>>24;
-                unsigned int combinedID = 10*cellID + moduleID;
 
-                std::pair<double, double> xyPos = hexReadout_->getCellCenterAbsolute(combinedID);
-    
                 const UChar_t* rgb = palette->ColorFromValue(energy);
                 TColor* aColor = new TColor();
                 Int_t color = aColor->GetColor((Int_t)rgb[0], (Int_t)rgb[1], (Int_t)rgb[2]);
     
-                TEveGeoShape* ecalDigiHit = drawer_->drawHexPrism(xyPos.first, xyPos.second, layerZPos[layer]+ecal_front_z, 0, 0, 0, 3, 4.47, color, 0, "RecHit");
+                TEveGeoShape* ecalDigiHit = drawer_->drawHexPrism(
+                        DETECTOR_GEOMETRY.getHexPrism( cellID , moduleID , layer ),
+                        0, 0, 0, 
+                        color, 0, "RecHit");
                 ecalCluster->AddElement(ecalDigiHit);
 
                 if (numHits < 2) { 
