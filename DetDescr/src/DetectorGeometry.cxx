@@ -17,15 +17,13 @@ namespace ldmx {
 
         hcalWidthScint_ = 100.0;
 
-        hcalThicknessLayer_ = 25. + hcalThicknessScint_ + 2*2.; //absorber + scint +2*air
-
         hcalNLayers_[ HcalSection::BACK   ] = 100;
-        hcalNLayers_[ HcalSection::TOP    ] = 28;
-        hcalNLayers_[ HcalSection::BOTTOM ] = 28;
-        hcalNLayers_[ HcalSection::LEFT   ] = 28;
-        hcalNLayers_[ HcalSection::RIGHT  ] = 28;
+        hcalNLayers_[ HcalSection::TOP    ] = 32;
+        hcalNLayers_[ HcalSection::BOTTOM ] = 32;
+        hcalNLayers_[ HcalSection::LEFT   ] = 32;
+        hcalNLayers_[ HcalSection::RIGHT  ] = 32;
         
-        hcalNStrips_[ HcalSection::BACK   ] = 30;
+        hcalNStrips_[ HcalSection::BACK   ] = 31;
         hcalNStrips_[ HcalSection::TOP    ] = 3;
         hcalNStrips_[ HcalSection::BOTTOM ] = 3;
         hcalNStrips_[ HcalSection::LEFT   ] = 3;
@@ -33,25 +31,33 @@ namespace ldmx {
          
         double ecal_z  = 290.;
         double ecal_xy = 525.;
-        double ecal_front = 200.;
+        double back_transverse_width = 3100.;
+        double ecal_front_z = 200.;
 
-        hcalLengthScint_[ HcalSection::BACK   ] = 3000.;
-        hcalLengthScint_[ HcalSection::TOP    ] = (3000.+ecal_xy)/2.;
-        hcalLengthScint_[ HcalSection::BOTTOM ] = (3000.+ecal_xy)/2.;
-        hcalLengthScint_[ HcalSection::LEFT   ] = (3000.+ecal_xy)/2.;
-        hcalLengthScint_[ HcalSection::RIGHT  ] = (3000.+ecal_xy)/2.;
+        hcalLengthScint_[ HcalSection::BACK   ] = back_transverse_width;
+        hcalLengthScint_[ HcalSection::TOP    ] = (back_transverse_width+ecal_xy)/2.;
+        hcalLengthScint_[ HcalSection::BOTTOM ] = (back_transverse_width+ecal_xy)/2.;
+        hcalLengthScint_[ HcalSection::LEFT   ] = (back_transverse_width+ecal_xy)/2.;
+        hcalLengthScint_[ HcalSection::RIGHT  ] = (back_transverse_width+ecal_xy)/2.;
          
-        hcalZeroLayer_[ HcalSection::BACK   ] = ecal_front + hcalNStrips_[ HcalSection::TOP ] * hcalWidthScint_;
+        hcalZeroLayer_[ HcalSection::BACK   ] = ecal_front_z + hcalNStrips_[ HcalSection::TOP ] * hcalWidthScint_;
         hcalZeroLayer_[ HcalSection::TOP    ] = ecal_xy/2.;
         hcalZeroLayer_[ HcalSection::BOTTOM ] = ecal_xy/2.;
         hcalZeroLayer_[ HcalSection::LEFT   ] = ecal_xy/2.;
         hcalZeroLayer_[ HcalSection::RIGHT  ] = ecal_xy/2.;
          
-        hcalZeroStrip_[ HcalSection::BACK   ] = 3000./2.; 
-        hcalZeroStrip_[ HcalSection::TOP    ] = 200.;
-        hcalZeroStrip_[ HcalSection::BOTTOM ] = 200.;
-        hcalZeroStrip_[ HcalSection::LEFT   ] = 200.;
-        hcalZeroStrip_[ HcalSection::RIGHT  ] = 200.;
+        hcalZeroStrip_[ HcalSection::BACK   ] = back_transverse_width/2.; 
+        hcalZeroStrip_[ HcalSection::TOP    ] = ecal_front_z;
+        hcalZeroStrip_[ HcalSection::BOTTOM ] = ecal_front_z;
+        hcalZeroStrip_[ HcalSection::LEFT   ] = ecal_front_z;
+        hcalZeroStrip_[ HcalSection::RIGHT  ] = ecal_front_z;
+
+        // absorber + scintillator + 2*air
+        hcalLayerThickness_[ HcalSection::BACK   ] = 25. + hcalThicknessScint_ + 2*2.;
+        hcalLayerThickness_[ HcalSection::TOP    ] = 20. + hcalThicknessScint_ + 2*2.;
+        hcalLayerThickness_[ HcalSection::BOTTOM ] = 20. + hcalThicknessScint_ + 2*2.;
+        hcalLayerThickness_[ HcalSection::LEFT   ] = 20. + hcalThicknessScint_ + 2*2.;
+        hcalLayerThickness_[ HcalSection::RIGHT  ] = 20. + hcalThicknessScint_ + 2*2.;
 
         ///////////////////////////////////////////////////////////////////////////////////
         // ECAL
@@ -60,17 +66,23 @@ namespace ldmx {
 
         ecalHexGap_ = 0.0;
 
-        ecalZeroLayer_ = 200.0;
+        ecalZeroLayer_ = ecal_front_z;
 
         ecalNCellsWide_ = 23;
 
-        ecalSiThickness_ = 1.5;
+        ecalSiThickness_ = 0.5;
 
         ecalDepth_ = 290.0;
 
         //TODO Recalculate these planes automatically
-        ecalSiPlanes_ = {2.8, 5.7, 12.05, 16.45, 24.3, 30.2, 39.3, 45.7, 54.8, 61.2, 70.3, 76.7, 85.8, 92.2, 101.3, 107.7, 116.8, 123.2, 132.3, 138.7, 147.8, 154.2, 163.3, 169.7, 182.3, 192.2, 204.8, 214.7, 227.3, 237.2, 249.8, 259.7, 272.3, 282.2}; // With respect to the front face of the ECAL
+        ecalSiPlanes_ = {
+            4.550, 7.300, 13.800, 18.200, 26.050, 31.950, 41.050, 47.450, 56.550, 62.950,
+            72.050, 78.450, 87.550, 93.950, 103.050, 109.450, 118.550, 124.950, 134.050,
+            140.450, 149.550, 155.950, 165.050, 171.450, 184.050, 193.950, 206.550, 216.450,
+            229.050, 238.950, 251.550, 261.450, 274.050, 283.950
+        }; // With respect to the front face of the ECAL
 
+        //Helper Class for Hex Readout
         ecalHexReader_ = std::make_unique<EcalHexReadout>( ecalHexRadius_ , ecalHexGap_, ecalNCellsWide_ );
 
         ecalXYTower_.emplace_back( 0.0 , 0.0 );
@@ -80,12 +92,10 @@ namespace ldmx {
                         cos( M_PI/3 * towerIndex)*( 2*ecalHexRadius_ + ecalHexGap_ )
                     );
         }
-
-        ///////////////////////////////////////////////////////////////////////////////////
-        // RECOIL TRACKER
-
-
-
+        
+        //TODO Recoil Tracker
+        //TODO Tagger
+        //TODO Trigger Pad
 
     }
 
@@ -99,7 +109,7 @@ namespace ldmx {
         int strip = hit->getStrip();
 
         //calculate center of layer,strip with respect to detector section
-        double layercenter = layer*hcalThicknessLayer_ + 0.5*hcalThicknessScint_;
+        double layercenter = layer*hcalLayerThickness_.at( section ) + 0.5*hcalThicknessScint_;
         double stripcenter = (strip + 0.5)*hcalWidthScint_;
 
         //calculate error in layer,strip position
@@ -226,7 +236,7 @@ namespace ldmx {
         std::pair< double, double > X(0,0), Y(0,0), Z(0,0);
 
         double total_strip_width = hcalNStrips_.at( section ) * hcalWidthScint_;
-        double total_thickness = hcalNLayers_.at( section ) * hcalThicknessLayer_;
+        double total_thickness = hcalNLayers_.at( section ) * hcalLayerThickness_.at( section );
         if ( section == HcalSection::BACK ) {
            
             X.first  = -hcalZeroStrip_.at( HcalSection::BACK );
@@ -298,7 +308,7 @@ namespace ldmx {
         HexPrism hexpris;
         hexpris.x = xy.first;
         hexpris.y = xy.second;
-        hexpris.z = ecalSiPlanes_.at( layer );
+        hexpris.z = ecalZeroLayer_ + ecalSiPlanes_.at( layer );
         hexpris.height = ecalSiThickness_;
         hexpris.radius = ecalHexRadius_ / ecalNCellsWide_;
 
