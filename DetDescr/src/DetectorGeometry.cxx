@@ -66,17 +66,23 @@ namespace ldmx {
 
         ecalHexGap_ = 0.0;
 
-        ecalZeroLayer_ = 200.0;
+        ecalZeroLayer_ = ecal_front_z;
 
         ecalNCellsWide_ = 23;
 
-        ecalSiThickness_ = 1.5;
+        ecalSiThickness_ = 0.5;
 
         ecalDepth_ = 290.0;
 
         //TODO Recalculate these planes automatically
-        ecalSiPlanes_ = {2.8, 5.7, 12.05, 16.45, 24.3, 30.2, 39.3, 45.7, 54.8, 61.2, 70.3, 76.7, 85.8, 92.2, 101.3, 107.7, 116.8, 123.2, 132.3, 138.7, 147.8, 154.2, 163.3, 169.7, 182.3, 192.2, 204.8, 214.7, 227.3, 237.2, 249.8, 259.7, 272.3, 282.2}; // With respect to the front face of the ECAL
+        ecalSiPlanes_ = {
+            4.550, 7.300, 13.800, 18.200, 26.050, 31.950, 41.050, 47.450, 56.550, 62.950,
+            72.050, 78.450, 87.550, 93.950, 103.050, 109.450, 118.550, 124.950, 134.050,
+            140.450, 149.550, 155.950, 165.050, 171.450, 184.050, 193.950, 206.550, 216.450,
+            229.050, 238.950, 251.550, 261.450, 274.050, 283.950
+        }; // With respect to the front face of the ECAL
 
+        //Helper Class for Hex Readout
         ecalHexReader_ = std::make_unique<EcalHexReadout>( ecalHexRadius_ , ecalHexGap_, ecalNCellsWide_ );
 
         ecalXYTower_.emplace_back( 0.0 , 0.0 );
