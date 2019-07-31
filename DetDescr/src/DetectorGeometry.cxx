@@ -17,15 +17,13 @@ namespace ldmx {
 
         hcalWidthScint_ = 100.0;
 
-        hcalThicknessLayer_ = 25. + hcalThicknessScint_ + 2*2.; //absorber + scint +2*air
-
         hcalNLayers_[ HcalSection::BACK   ] = 100;
-        hcalNLayers_[ HcalSection::TOP    ] = 28;
-        hcalNLayers_[ HcalSection::BOTTOM ] = 28;
-        hcalNLayers_[ HcalSection::LEFT   ] = 28;
-        hcalNLayers_[ HcalSection::RIGHT  ] = 28;
+        hcalNLayers_[ HcalSection::TOP    ] = 32;
+        hcalNLayers_[ HcalSection::BOTTOM ] = 32;
+        hcalNLayers_[ HcalSection::LEFT   ] = 32;
+        hcalNLayers_[ HcalSection::RIGHT  ] = 32;
         
-        hcalNStrips_[ HcalSection::BACK   ] = 30;
+        hcalNStrips_[ HcalSection::BACK   ] = 31;
         hcalNStrips_[ HcalSection::TOP    ] = 3;
         hcalNStrips_[ HcalSection::BOTTOM ] = 3;
         hcalNStrips_[ HcalSection::LEFT   ] = 3;
@@ -33,25 +31,33 @@ namespace ldmx {
          
         double ecal_z  = 290.;
         double ecal_xy = 525.;
-        double ecal_front = 200.;
+        double back_transverse_width = 3100.;
+        double ecal_front_z = 200.;
 
-        hcalLengthScint_[ HcalSection::BACK   ] = 3000.;
-        hcalLengthScint_[ HcalSection::TOP    ] = (3000.+ecal_xy)/2.;
-        hcalLengthScint_[ HcalSection::BOTTOM ] = (3000.+ecal_xy)/2.;
-        hcalLengthScint_[ HcalSection::LEFT   ] = (3000.+ecal_xy)/2.;
-        hcalLengthScint_[ HcalSection::RIGHT  ] = (3000.+ecal_xy)/2.;
+        hcalLengthScint_[ HcalSection::BACK   ] = back_transverse_width;
+        hcalLengthScint_[ HcalSection::TOP    ] = (back_transverse_width+ecal_xy)/2.;
+        hcalLengthScint_[ HcalSection::BOTTOM ] = (back_transverse_width+ecal_xy)/2.;
+        hcalLengthScint_[ HcalSection::LEFT   ] = (back_transverse_width+ecal_xy)/2.;
+        hcalLengthScint_[ HcalSection::RIGHT  ] = (back_transverse_width+ecal_xy)/2.;
          
-        hcalZeroLayer_[ HcalSection::BACK   ] = ecal_front + hcalNStrips_[ HcalSection::TOP ] * hcalWidthScint_;
+        hcalZeroLayer_[ HcalSection::BACK   ] = ecal_front_z + hcalNStrips_[ HcalSection::TOP ] * hcalWidthScint_;
         hcalZeroLayer_[ HcalSection::TOP    ] = ecal_xy/2.;
         hcalZeroLayer_[ HcalSection::BOTTOM ] = ecal_xy/2.;
         hcalZeroLayer_[ HcalSection::LEFT   ] = ecal_xy/2.;
         hcalZeroLayer_[ HcalSection::RIGHT  ] = ecal_xy/2.;
          
-        hcalZeroStrip_[ HcalSection::BACK   ] = 3000./2.; 
-        hcalZeroStrip_[ HcalSection::TOP    ] = 200.;
-        hcalZeroStrip_[ HcalSection::BOTTOM ] = 200.;
-        hcalZeroStrip_[ HcalSection::LEFT   ] = 200.;
-        hcalZeroStrip_[ HcalSection::RIGHT  ] = 200.;
+        hcalZeroStrip_[ HcalSection::BACK   ] = back_transverse_width/2.; 
+        hcalZeroStrip_[ HcalSection::TOP    ] = ecal_front_z;
+        hcalZeroStrip_[ HcalSection::BOTTOM ] = ecal_front_z;
+        hcalZeroStrip_[ HcalSection::LEFT   ] = ecal_front_z;
+        hcalZeroStrip_[ HcalSection::RIGHT  ] = ecal_front_z;
+
+        // absorber + scintillator + 2*air
+        hcalLayerThickness_[ HcalSection::BACK   ] = 25. + hcalThicknessScint_ + 2*2.;
+        hcalLayerThickness_[ HcalSection::TOP    ] = 20. + hcalThicknessScint_ + 2*2.;
+        hcalLayerThickness_[ HcalSection::BOTTOM ] = 20. + hcalThicknessScint_ + 2*2.;
+        hcalLayerThickness_[ HcalSection::LEFT   ] = 20. + hcalThicknessScint_ + 2*2.;
+        hcalLayerThickness_[ HcalSection::RIGHT  ] = 20. + hcalThicknessScint_ + 2*2.;
 
         ///////////////////////////////////////////////////////////////////////////////////
         // ECAL
@@ -97,7 +103,7 @@ namespace ldmx {
         int strip = hit->getStrip();
 
         //calculate center of layer,strip with respect to detector section
-        double layercenter = layer*hcalThicknessLayer_ + 0.5*hcalThicknessScint_;
+        double layercenter = layer*hcalLayerThickness_.at( section ) + 0.5*hcalThicknessScint_;
         double stripcenter = (strip + 0.5)*hcalWidthScint_;
 
         //calculate error in layer,strip position
@@ -224,7 +230,7 @@ namespace ldmx {
         std::pair< double, double > X(0,0), Y(0,0), Z(0,0);
 
         double total_strip_width = hcalNStrips_.at( section ) * hcalWidthScint_;
-        double total_thickness = hcalNLayers_.at( section ) * hcalThicknessLayer_;
+        double total_thickness = hcalNLayers_.at( section ) * hcalLayerThickness_.at( section );
         if ( section == HcalSection::BACK ) {
            
             X.first  = -hcalZeroStrip_.at( HcalSection::BACK );

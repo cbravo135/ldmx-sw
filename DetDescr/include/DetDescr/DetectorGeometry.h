@@ -126,6 +126,9 @@ namespace ldmx {
             
             /** The plane of the zero'th strip of each section [mm] */
             std::map< HcalSection , double > hcalZeroStrip_;
+
+            /** Thickness of the layers in each seciton [mm] */
+            std::map< HcalSection , double > hcalLayerThickness_;
  
             /** an example layer number of a vertical layer */
             int hcalParityVertical_;
@@ -138,9 +141,6 @@ namespace ldmx {
 
             /** Width of Scintillator Strip [mm] */
             double hcalWidthScint_;
- 
-            /** Thickness of a whole layer  [mm] */
-            double hcalThicknessLayer_;
 
             /////////////////////////////////////////////////////////////
             // ECAL
