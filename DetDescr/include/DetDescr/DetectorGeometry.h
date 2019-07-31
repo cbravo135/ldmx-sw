@@ -172,6 +172,35 @@ namespace ldmx {
             /** XYCoord for each ECAL Tower (Calculated from ecalHexRadius_ and ecalHexGap_ */
             std::vector< XYCoords > ecalXYTower_;
 
+            /////////////////////////////////////////////////////////////
+            // RECOIL TRACKER
+
+            double recoilStereoStripLength_;
+
+            double recoilStereoXWidth_;
+
+            double recoilStereoYWidth_;
+
+            double recoilStereoSeparation_;
+
+            double recoilStereoAngle_;
+
+            std::vector< double > recoilStereoLayerZPos_;
+
+            double recoilMonoStripLength_;
+
+            double recoilMonoXWidth_;
+
+            double recoilMonoYWidth_;
+
+            double recoilMonoSeparation_;
+
+            std::vector< XYCoords > recoilMonoXYCoords_;
+
+            std::vector< double > recoilMonoLayerZPos_;
+
+            double recoilSensorThickness_;
+
     };
 
     /**

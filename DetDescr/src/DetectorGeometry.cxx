@@ -93,7 +93,51 @@ namespace ldmx {
                     );
         }
         
-        //TODO Recoil Tracker
+
+        /////////////////////////////////////////////////////////////
+        // RECOIL TRACKER
+
+
+        recoilStereoStripLength_ = 98.0;
+
+        recoilStereoXWidth_ = 40.34;
+
+        recoilStereoYWidth_ = 100.0;
+
+        recoilStereoSeparation_ = 3.0;
+
+        recoilStereoAngle_ = 0.1;
+
+        recoilStereoLayerZPos_ = {
+            7.5, 22.5, 37.5, 52.5
+        };
+
+        recoilMonoStripLength_ = 78.0;
+
+        recoilMonoXWidth_ = 50.0;
+
+        recoilMonoYWidth_ = 80.0;
+
+        recoilMonoSeparation_ = 1.0;
+
+        recoilMonoXYCoords_.emplace_back( -2*recoilMonoXWidth_ , -0.5*recoilMonoYWidth_ );
+        recoilMonoXYCoords_.emplace_back( -1*recoilMonoXWidth_ , -0.5*recoilMonoYWidth_ );
+        recoilMonoXYCoords_.emplace_back(                    0 , -0.5*recoilMonoYWidth_ );
+        recoilMonoXYCoords_.emplace_back(  1*recoilMonoXWidth_ , -0.5*recoilMonoYWidth_ );
+        recoilMonoXYCoords_.emplace_back(  2*recoilMonoXWidth_ , -0.5*recoilMonoYWidth_ );
+        recoilMonoXYCoords_.emplace_back( -2*recoilMonoXWidth_ ,  0.5*recoilMonoYWidth_ );
+        recoilMonoXYCoords_.emplace_back( -1*recoilMonoXWidth_ ,  0.5*recoilMonoYWidth_ );
+        recoilMonoXYCoords_.emplace_back(                    0 ,  0.5*recoilMonoYWidth_ );
+        recoilMonoXYCoords_.emplace_back(  1*recoilMonoXWidth_ ,  0.5*recoilMonoYWidth_ );
+        recoilMonoXYCoords_.emplace_back(  2*recoilMonoXWidth_ ,  0.5*recoilMonoYWidth_ );
+
+        recoilMonoLayerZPos_ = { 
+            90.0, 180.0 
+        };
+
+        recoilSensorThickness_ = 0.52;
+
+           
         //TODO Tagger
         //TODO Trigger Pad
 
