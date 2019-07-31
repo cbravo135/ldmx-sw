@@ -308,7 +308,7 @@ namespace ldmx {
         HexPrism hexpris;
         hexpris.x = xy.first;
         hexpris.y = xy.second;
-        hexpris.z = ecalSiPlanes_.at( layer );
+        hexpris.z = ecalZeroLayer_ + ecalSiPlanes_.at( layer );
         hexpris.height = ecalSiThickness_;
         hexpris.radius = ecalHexRadius_ / ecalNCellsWide_;
 
