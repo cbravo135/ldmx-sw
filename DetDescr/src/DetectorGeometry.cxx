@@ -93,7 +93,121 @@ namespace ldmx {
                     );
         }
         
-        //TODO Recoil Tracker
+
+        /////////////////////////////////////////////////////////////
+        // RECOIL TRACKER
+        //      The gdml file for the recoil tracker is kinda opaque.
+        //      The layer and module IDs are calculated from the copy number of each of the sensor volumes.
+        //          layer  = copyNum / 10 (integer division)
+        //          module = copyNum % 10
+        //      The first 8 layer IDs are the first 4 layers of stereo sensors.
+        //          Each stereo layer contains a front layer that is not tilted at an angle and a back layer that is tilted.
+        //      The last 2 layer IDs correspond to the 2 layers of mono sensors.
+        //          Each mono layer contains 10 modules (ids 0 - 9) that have a complicated position arrangement.
+        //
+        //      In order to avoid mistakes, the position and angle of each module will be hard coded here instead of
+        //      calculated from design specifications like the HCAL case.
+
+        recoilStereoStripLength_ = 98.0;
+
+        recoilStereoXWidth_ = 40.34;
+
+        recoilStereoYWidth_ = 100.0;
+
+        recoilStereoSeparation_ = 3.0;
+
+        recoilStereoAngle_ = 0.1;
+
+        recoilMonoStripLength_ = 78.0;
+
+        recoilMonoXWidth_ = 50.0;
+
+        recoilMonoYWidth_ = 80.0;
+
+        recoilMonoSeparation_ = 1.0;
+
+        recoilSensorThickness_ = 0.52;
+
+        //The following keys for the position and angle maps should correspond to the copynumber in the recoil.gdml file
+        //At writing, the layerIDs and moduleIDs are set in the simulation from this copy number (TrackerSD.cxx in SimApplication)
+        
+        std::vector<double> recoilStereoLayerZPos = {
+            7.5, 22.5, 37.5, 52.5
+        };
+
+        recoilModulePos_[10]  = { 0 , 0 , recoilStereoLayerZPos.at(0) - recoilStereoSeparation_ };
+        recoilModulePos_[20]  = { 0 , 0 , recoilStereoLayerZPos.at(0) + recoilStereoSeparation_ };
+           
+        recoilModulePos_[30]  = { 0 , 0 , recoilStereoLayerZPos.at(1) - recoilStereoSeparation_ };
+        recoilModulePos_[40]  = { 0 , 0 , recoilStereoLayerZPos.at(1) + recoilStereoSeparation_ };
+           
+        recoilModulePos_[50]  = { 0 , 0 , recoilStereoLayerZPos.at(2) - recoilStereoSeparation_ };
+        recoilModulePos_[60]  = { 0 , 0 , recoilStereoLayerZPos.at(2) + recoilStereoSeparation_ };
+           
+        recoilModulePos_[70]  = { 0 , 0 , recoilStereoLayerZPos.at(3) - recoilStereoSeparation_ };
+        recoilModulePos_[80]  = { 0 , 0 , recoilStereoLayerZPos.at(3) + recoilStereoSeparation_ };
+           
+        std::vector<double> recoilMonoLayerZPos = { 
+            90.0, 180.0 
+        };
+
+        recoilModulePos_[90]  = { 2*recoilMonoXWidth_ , 0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(0) + recoilMonoSeparation_ };
+        recoilModulePos_[91]  = {   recoilMonoXWidth_ , 0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(0) - recoilMonoSeparation_ };
+        recoilModulePos_[92]  = {                 0.0 , 0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(0) + recoilMonoSeparation_ };
+        recoilModulePos_[93]  = {-1*recoilMonoXWidth_ , 0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(0) - recoilMonoSeparation_ };
+        recoilModulePos_[94]  = {-2*recoilMonoXWidth_ , 0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(0) + recoilMonoSeparation_ };
+        recoilModulePos_[95]  = { 2*recoilMonoXWidth_ ,-0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(0) + recoilMonoSeparation_ };
+        recoilModulePos_[96]  = {   recoilMonoXWidth_ ,-0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(0) - recoilMonoSeparation_ };
+        recoilModulePos_[97]  = {                 0.0 ,-0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(0) + recoilMonoSeparation_ };
+        recoilModulePos_[98]  = {-1*recoilMonoXWidth_ ,-0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(0) - recoilMonoSeparation_ };
+        recoilModulePos_[99]  = {-2*recoilMonoXWidth_ ,-0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(0) + recoilMonoSeparation_ };
+
+        recoilModulePos_[100] = { 2*recoilMonoXWidth_ , 0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(1) + recoilMonoSeparation_ };
+        recoilModulePos_[101] = {   recoilMonoXWidth_ , 0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(1) - recoilMonoSeparation_ };
+        recoilModulePos_[102] = {                 0.0 , 0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(1) + recoilMonoSeparation_ };
+        recoilModulePos_[103] = {-1*recoilMonoXWidth_ , 0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(1) - recoilMonoSeparation_ };
+        recoilModulePos_[104] = {-2*recoilMonoXWidth_ , 0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(1) + recoilMonoSeparation_ };
+        recoilModulePos_[105] = { 2*recoilMonoXWidth_ ,-0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(1) + recoilMonoSeparation_ };
+        recoilModulePos_[106] = {   recoilMonoXWidth_ ,-0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(1) - recoilMonoSeparation_ };
+        recoilModulePos_[107] = {                 0.0 ,-0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(1) + recoilMonoSeparation_ };
+        recoilModulePos_[108] = {-1*recoilMonoXWidth_ ,-0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(1) - recoilMonoSeparation_ };
+        recoilModulePos_[109] = {-2*recoilMonoXWidth_ ,-0.5*recoilMonoYWidth_ , recoilMonoLayerZPos.at(1) + recoilMonoSeparation_ };
+
+        //Recoil Angles
+        recoilModuleAngle_[10]  = 0.0;
+        recoilModuleAngle_[20]  = recoilStereoAngle_;
+           
+        recoilModuleAngle_[30]  = 0.0;
+        recoilModuleAngle_[40]  = -recoilStereoAngle_;
+           
+        recoilModuleAngle_[50]  = 0.0;
+        recoilModuleAngle_[60]  = recoilStereoAngle_;
+           
+        recoilModuleAngle_[70]  = 0.0;
+        recoilModuleAngle_[80]  = -recoilStereoAngle_;
+           
+        recoilModuleAngle_[90]  = 0.0;
+        recoilModuleAngle_[91]  = 0.0;
+        recoilModuleAngle_[92]  = 0.0;
+        recoilModuleAngle_[93]  = 0.0;
+        recoilModuleAngle_[94]  = 0.0;
+        recoilModuleAngle_[95]  = 0.0;
+        recoilModuleAngle_[96]  = 0.0;
+        recoilModuleAngle_[97]  = 0.0;
+        recoilModuleAngle_[98]  = 0.0;
+        recoilModuleAngle_[99]  = 0.0;
+
+        recoilModuleAngle_[100] = 0.0;
+        recoilModuleAngle_[101] = 0.0;
+        recoilModuleAngle_[102] = 0.0;
+        recoilModuleAngle_[103] = 0.0;
+        recoilModuleAngle_[104] = 0.0;
+        recoilModuleAngle_[105] = 0.0;
+        recoilModuleAngle_[106] = 0.0;
+        recoilModuleAngle_[107] = 0.0;
+        recoilModuleAngle_[108] = 0.0;
+        recoilModuleAngle_[109] = 0.0;
+
         //TODO Tagger
         //TODO Trigger Pad
 
@@ -342,5 +456,82 @@ namespace ldmx {
         hexpris.radius = ecalHexRadius_ * 2 / sqrt(3); //need radius to corner, not to side
 
         return hexpris;
+    }
+
+    double DetectorGeometry::getRotAngle( int layerID , int moduleID ) const {
+        
+        int combined = layerID*10 + moduleID;
+
+        if ( recoilModuleAngle_.find( combined ) == recoilModuleAngle_.end() ) {
+            std::cerr << "[ Warning ] : DetectorGeometry::getRotAngle : Input layerID (" << layerID
+                << ") and input moduleID (" << moduleID << ") are not included in the geometry!" << std::endl;
+            return 0.0;
+        }
+
+        return recoilModuleAngle_.at( combined );
+
+    }
+
+    BoundingBox DetectorGeometry::getBoundingBox( int layerID , int moduleID ) const {
+        
+        int combined = layerID*10 + moduleID;
+
+        BoundingBox bbox;
+        if ( recoilModulePos_.find( combined ) == recoilModulePos_.end() ) {
+            std::cerr << "[ Warning ] : DetectorGeometry::getBoundingBox : Input layerID (" << layerID
+                << ") and input moduleID (" << moduleID << ") are not included in the geometry!" << std::endl;
+            return bbox;
+        }
+
+        double xWidth = recoilStereoXWidth_;
+        double yWidth = recoilStereoStripLength_;
+        if ( layerID > 8 ) {
+            xWidth = recoilMonoXWidth_;
+            yWidth = recoilMonoStripLength_;
+        }
+
+        bbox.emplace_back( recoilModulePos_.at(combined).at(0) - xWidth/2. , 
+                           recoilModulePos_.at(combined).at(0) + xWidth/2. );
+        bbox.emplace_back( recoilModulePos_.at(combined).at(1) - yWidth/2. , 
+                           recoilModulePos_.at(combined).at(1) + yWidth/2. ); 
+        bbox.emplace_back( recoilModulePos_.at(combined).at(2) - recoilSensorThickness_/2. ,
+                           recoilModulePos_.at(combined).at(2) + recoilSensorThickness_/2. );
+
+        return bbox;
+    }
+
+    BoundingBox DetectorGeometry::getBoundingBox( SimTrackerHit* recoilHit ) const {
+        
+        int layerID = recoilHit->getLayerID();
+        int moduleID = recoilHit->getModuleID();
+        int combined = layerID*10 + moduleID;
+
+        BoundingBox bbox;
+        if ( recoilModulePos_.find( combined ) == recoilModulePos_.end() ) {
+            std::cerr << "[ Warning ] : DetectorGeometry::getBoundingBox : Input layerID (" << layerID
+                << ") and input moduleID (" << moduleID << ") are not included in the geometry!" << std::endl;
+            return bbox;
+        }
+
+        std::vector<float> hitPos = recoilHit->getPosition();
+
+        double xWidth = 1.0;
+        double yWidth = recoilStereoStripLength_;
+        if ( layerID > 8 ) {
+            yWidth = recoilMonoStripLength_;
+        }
+
+        //we have to un-rotate the x-position of the hit, so we can rotate it later with the drawer
+        double rotAngle = this->getRotAngle( layerID , moduleID );
+        double xPos = hitPos.at(0)*cos( -rotAngle ) - hitPos.at(1)*sin( -rotAngle );
+
+        bbox.emplace_back( xPos - xWidth/2. , 
+                           xPos + xWidth/2. );
+        bbox.emplace_back( recoilModulePos_.at(combined).at(1) - yWidth/2. , 
+                           recoilModulePos_.at(combined).at(1) + yWidth/2. ); 
+        bbox.emplace_back( recoilModulePos_.at(combined).at(2) - recoilSensorThickness_/2. ,
+                           recoilModulePos_.at(combined).at(2) + recoilSensorThickness_/2. );
+
+        return bbox;
     }
 }
