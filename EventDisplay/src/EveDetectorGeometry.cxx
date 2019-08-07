@@ -73,97 +73,37 @@ namespace ldmx {
     
     void EveDetectorGeometry::drawRecoilTracker() {
     
-        for (int j = 0; j < 4; ++j) {
+        for (int layerID = 1; layerID < 9; layerID++ ) {
     
-            TString nfront;
-            nfront.Form("Stereo%d_front", j+1);
+            TString name;
+            name.Form("Stereo_%d", layerID );
     
-            TString nback;
-            nback.Form("Stereo%d_back", j+1);
+            TEveGeoShape *layer = shapeDrawer_->drawRectPrism(
+                    DETECTOR_GEOMETRY.getBoundingBox( layerID , 0 ),
+                    0, 0, DETECTOR_GEOMETRY.getRotAngle( layerID , 0 )*180/M_PI, 
+                    kRed-10, 90, name );
     
-            TEveGeoShape *front = shapeDrawer_->drawRectPrism(
-                    0, 0, recoilLayerZPos[j]-mono_sep/2, 
-                    stereo_x_width, stereo_y_width, recoil_sensor_thick, 
-                    0, 0, 0, 
-                    kRed-10, 90, nfront);
-
-    
-            if (j % 2 == 0) { // Alternate angle for back layer of a stereo pair.
-                TEveGeoShape *back = shapeDrawer_->drawRectPrism(
-                        0, 0, recoilLayerZPos[j]+mono_sep/2, 
-                        stereo_x_width, stereo_y_width, recoil_sensor_thick, 
-                        0, 0, stereo_angle, 
-                        kRed-10, 90, nback);
-
-                recoilTracker_->AddElement(back);
-            } else {
-                TEveGeoShape *back = shapeDrawer_->drawRectPrism(
-                        0, 0, recoilLayerZPos[j]+mono_sep/2, 
-                        stereo_x_width, stereo_y_width, recoil_sensor_thick, 
-                        0, 0, -stereo_angle, 
-                        kRed-10, 90, nback);
-
-                recoilTracker_->AddElement(back);
-            }
-    
-            recoilTracker_->AddElement(front);
+            recoilTracker_->AddElement(layer);
         }
     
-        int module1 = 1;
-        for (int x = 0; x < 5; ++x) {
-            for (int y = 0; y < 2; ++y) {
+        for (int layerID = 9; layerID < 11; layerID++ ) {
+            for (int moduleID = 0; moduleID < 10; moduleID++ ) {
     
                 TString name;
-                name.Form("Mono1_%d",module1);
-                ++module1;
-    
-                if (x % 2 != 0) { // Alternate mono layer z by defined separation.
-                    TEveGeoShape *front = shapeDrawer_->drawRectPrism(
-                            monoSensorXPos[x], monoSensorYPos[y], recoilLayerZPos[4]-mono_sep/2, 
-                            mono_x_width, mono_y_width, recoil_sensor_thick, 
-                            0, 0, 0, 
-                            kRed-10, 80, name);
+                name.Form("Mono_%d_%d" , layerID , moduleID );
 
-                    recoilTracker_->AddElement(front);
-                } else {
-                    TEveGeoShape *back = shapeDrawer_->drawRectPrism(
-                            monoSensorXPos[x], monoSensorYPos[y], recoilLayerZPos[4]+mono_sep/2, 
-                            mono_x_width, mono_y_width, recoil_sensor_thick, 
-                            0, 0, 0, 
-                            kRed-10, 80, name);
-
-                    recoilTracker_->AddElement(back);
-                }
-            }
-        }
-    
-        int module2 = 1;
-        for (int x = 0; x < 5; ++x) {
-            for (int y = 0; y < 2; ++y) {
-    
-                TString name;
-                name.Form("Mono2_%d",module2);
-                module2++;
-    
-                if (x % 2 != 0) { // Alternate mono layer z by defined separation.
-                    TEveGeoShape *front = shapeDrawer_->drawRectPrism(
-                            monoSensorXPos[x], monoSensorYPos[y], recoilLayerZPos[5]-mono_sep/2, 
-                            mono_x_width, mono_y_width, recoil_sensor_thick, 
-                            0, 0, 0, 
-                            kRed-10, 90, name);
-
-                    recoilTracker_->AddElement(front);
-                } else {
-                   TEveGeoShape *back = shapeDrawer_->drawRectPrism(
-                           monoSensorXPos[x], monoSensorYPos[y], recoilLayerZPos[5]+mono_sep/2, 
-                           mono_x_width, mono_y_width, recoil_sensor_thick, 
-                           0, 0, 0, 
-                           kRed-10, 90, name);
-                    recoilTracker_->AddElement(back);
-                }
+         
+                TEveGeoShape *layer = shapeDrawer_->drawRectPrism(
+                        DETECTOR_GEOMETRY.getBoundingBox( layerID , moduleID ),
+                        0, 0, DETECTOR_GEOMETRY.getRotAngle( layerID , moduleID )*180/M_PI, 
+                        kRed-10, 90, name );
+        
+                recoilTracker_->AddElement(layer);
             }
         }
     
         detector_->AddElement(recoilTracker_);
+
+        return;
     }
 }

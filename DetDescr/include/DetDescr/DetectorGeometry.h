@@ -18,7 +18,8 @@
 //LDMX Framework
 #include "DetDescr/HcalID.h" //HcalSection enum
 #include "DetDescr/EcalHexReadout.h"
-#include "Event/HcalHit.h" //hit pointer
+#include "Event/SimTrackerHit.h" //recoil hits
+#include "Event/HcalHit.h"
 #include "Event/EcalHit.h"
 
 namespace ldmx {
@@ -106,6 +107,34 @@ namespace ldmx {
              * @return HexPrism
              */
             HexPrism getHexPrism( int towerIndex ) const;
+
+            /**
+             * Get Rotation Angle around z-axis for the input layerID and moduleID
+             *
+             * @param layerID index for layer of recoil module
+             * @param moduleID index for module of recoil module
+             * @return rotation angle in radians
+             */
+            double getRotAngle( int layerID , int moduleID ) const;
+
+            /**
+             * Get Bounding Box for input recoil module
+             * NOTE: This does not take into account any rotation! Use getRotAngle as well!
+             *
+             * @param layerID index for layer of module
+             * @param moduleID index for module
+             * @return BoundingBox that bounds the module
+             */
+            BoundingBox getBoundingBox( int layerID , int moduleID ) const;
+
+            /**
+             * Get Bounding Box for input recoil hit
+             * NOTE: This does not take into account any rotation! Use getRotAngle as well!
+             *
+             * @param recoilHit SimTrackerHit in recoil tracker
+             * @return BoundingBox that bounds the hit
+             */
+            BoundingBox getBoundingBox( SimTrackerHit* recoilHit ) const;
         
         private:
 
@@ -185,8 +214,6 @@ namespace ldmx {
 
             double recoilStereoAngle_;
 
-            std::vector< double > recoilStereoLayerZPos_;
-
             double recoilMonoStripLength_;
 
             double recoilMonoXWidth_;
@@ -195,12 +222,17 @@ namespace ldmx {
 
             double recoilMonoSeparation_;
 
-            std::vector< XYCoords > recoilMonoXYCoords_;
-
-            std::vector< double > recoilMonoLayerZPos_;
-
             double recoilSensorThickness_;
 
+            /** position of each module in recoil detector
+             * The key in this map is 10*layerID+moduleID
+             */
+            std::map< int , std::vector<double> > recoilModulePos_;
+
+            /** angular tilt for each module in recoil detector
+             * The key in this map is 10*layerID+moduleID
+             */
+            std::map< int , double > recoilModuleAngle_;
     };
 
     /**

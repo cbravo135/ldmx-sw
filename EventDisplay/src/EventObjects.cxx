@@ -200,63 +200,12 @@ namespace ldmx {
             TString recoilName;
             recoilName.Form("Recoil Hit %d", iter);
 
-            if ((xyzPos[2] > 4 && xyzPos[2] < 5) || (xyzPos[2] > 19 && xyzPos[2] < 20) || (xyzPos[2] > 34 && xyzPos[2] < 35) || (xyzPos[2] > 49 && xyzPos[2] < 50)) {
+            TEveGeoShape *recoilHit = drawer_->drawRectPrism(
+                    DETECTOR_GEOMETRY.getBoundingBox( hit ) ,
+                    0, 0, DETECTOR_GEOMETRY.getRotAngle( hit->getLayerID() , hit->getModuleID() )*180/M_PI,
+                    kRed+1, 0, recoilName );
+            recoilTrackerHits_->AddElement(recoilHit);
 
-                TEveGeoShape *recoilHit = drawer_->drawRectPrism(
-                        xyzPos[0], 0, xyzPos[2], 
-                        1, stereo_strip_length, recoil_sensor_thick, 
-                        0, 0, 0, 
-                        kRed+1, 0, recoilName);
-                recoilTrackerHits_->AddElement(recoilHit);
-
-            } else if ((xyzPos[2] > 10 && xyzPos[2] < 11) || (xyzPos[2] > 40 && xyzPos[2] < 41)) {
-
-                TVector3 rotPos = {xyzPos[0], xyzPos[1], xyzPos[2]};
-                rotPos.RotateZ(-stereo_angle*M_PI/180);
-
-                TEveGeoShape *recoilHit = drawer_->drawRectPrism(
-                        rotPos[0], 0, xyzPos[2], 
-                        1, stereo_strip_length, recoil_sensor_thick, 
-                        0, 0, stereo_angle, 
-                        kRed+1, 0, recoilName);
-                recoilTrackerHits_->AddElement(recoilHit);
-
-            } else if ((xyzPos[2] > 25 && xyzPos[2] < 26) || (xyzPos[2] > 55 && xyzPos[2] < 56)) {
-
-                TVector3 rotPos = {xyzPos[0], xyzPos[1], xyzPos[2]};
-                rotPos.RotateZ(stereo_angle*M_PI/180);
-
-                TEveGeoShape *recoilHit = drawer_->drawRectPrism(
-                        rotPos[0], 0, xyzPos[2], 
-                        1, stereo_strip_length, recoil_sensor_thick, 
-                        0, 0, -stereo_angle, 
-                        kRed+1, 0, recoilName);
-                recoilTrackerHits_->AddElement(recoilHit);
-
-            } else if (xyzPos[2] > 65) {
-                if (fabs(xyzPos[1]) > 1.0) { // dead region
-
-                    if (xyzPos[1] > 0) {
-
-                        TEveGeoShape *recoilHit = drawer_->drawRectPrism(
-                                xyzPos[0], mono_strip_length/2+1, xyzPos[2], 
-                                1, mono_strip_length, recoil_sensor_thick, 
-                                0, 0, 0, 
-                                kRed, 0, recoilName);
-
-                        recoilTrackerHits_->AddElement(recoilHit);
-                    } else {
-
-                        TEveGeoShape *recoilHit = drawer_->drawRectPrism(
-                                xyzPos[0], -mono_strip_length/2-1, xyzPos[2], 
-                                1, mono_strip_length, recoil_sensor_thick, 
-                                0, 0, 0, 
-                                kRed, 0, recoilName);
-
-                        recoilTrackerHits_->AddElement(recoilHit);
-                    }
-                }
-            }
             iter++;
         }
 
