@@ -19,6 +19,9 @@
 #include "G4RunManager.hh"
 #include "G4CascadeParameters.hh"
 
+// LCDD
+#include "lcdd/core/LCDDDetectorConstruction.hh"
+
 namespace ldmx {
 
     SimApplication::SimApplication() {
@@ -52,6 +55,7 @@ namespace ldmx {
 
         // Supply default user initializations and actions.
         runManager->SetUserInitialization(new DetectorConstruction(parser));
+        runManager->SetUserInitialization(new LCDDDetectorConstruction());
         runManager->SetRandomNumberStore(true);
 
         // Initialize G4 visualization framework.

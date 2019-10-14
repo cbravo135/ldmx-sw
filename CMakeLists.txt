@@ -11,6 +11,8 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
+# add dir with extra CMake modules 
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules/)
 
 # find XercesC installation
 if(XercesC_DIR)
@@ -42,6 +44,25 @@ get_filename_component(PYTHON_LIBRARY_DIR ${PYTHON_LIBRARIES} DIRECTORY)
 find_package(ROOT REQUIRED COMPONENTS Core RIO PyROOT Geom Eve Gui)
 message(STATUS "ROOT found at: ${ROOT_DIR}")
 
+# Find GDML installation
+find_package(GDML REQUIRED)
+if(GDML_DIR)
+    if (NOT EXISTS "${GDML_DIR}")
+        message(FATAL_ERROR "Unable to guess location of GDML lib.  Please specify using: -DGDML_DIR")
+    endif()
+    message(STATUS "GDML dir set to: ${GDML_DIR}")
+    message(STATUS "GDML include dir set to: ${GDML_INCLUDE_DIR}")
+    message(STATUS "GDML library set to: ${GDML_LIBRARY}")
+endif()
+
+# Find LCDD installation
+find_package(LCDD REQUIRED)
+if (LCIO_DIR)
+    message(STATUS "LCDD dir set to: ${LCDD_DIR}")
+    message(STATUS "LCDD include dir set to: ${LCDD_INCLUDE_DIR}")
+    message(STATUS "LCDD library set to: ${LCDD_LIBRARY}")
+endif()
+
 # find boost headers
 # specify location with -DBOOST_ROOT=<location-of-boost-prefix>
 find_package(Boost REQUIRED)
@@ -54,14 +75,11 @@ endif()
 option(INSTALL_FIELDMAP "Install field map data from MagFieldMap sub-module" ON)
 message(STATUS "MagFieldMap installation: ${INSTALL_FIELDMAP}")
 if(INSTALL_FIELDMAP)
-  install(SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Scripts/InstallMagFieldMap.cmake")
+    install(SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Scripts/InstallMagFieldMap.cmake")
 endif()
 
 # option to print extra module information during CMake config
 option(MODULE_DEBUG "Print extra module information during CMake config" OFF)
-
-# add dir with extra CMake modules 
-list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules/)
 
 # import macro for declaring modules
 include(MacroModule)
@@ -75,12 +93,12 @@ include(MacroExtDeps)
 set( UNSORTED "" )
 file( GLOB children RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/* )
 foreach( child ${children} )
-  if ( (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${child}/include")
-   AND (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${child}/src")
-   AND (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${child}/CMakeLists.txt" ) )
-    #child is correct format to be a module
-    list( APPEND UNSORTED ${child} )
-  endif()
+    if ( (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${child}/include")
+        AND (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${child}/src")
+        AND (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${child}/CMakeLists.txt" ) )
+        #child is correct format to be a module
+        list( APPEND UNSORTED ${child} )
+    endif()
 endforeach()
 
 # Sort modules so that each item has its dependencies listed before it.
@@ -91,65 +109,65 @@ endforeach()
 set( MODULES "" )
 list( LENGTH UNSORTED nleft )
 while( nleft GREATER 0 )
-  #loop until there are no modules left in UNSORTED
-  set( addedmodule FALSE )
-  foreach( module ${UNSORTED} )
-    # get dependency list
-    file( STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/${module}/CMakeLists.txt" deps REGEX ".* DEPENDENCIES.*" )
-    
-    # check if dependencies (if they exist) have already been listed
-    set( nodeps TRUE )
-    if( NOT( deps STREQUAL "") )
-      string( REPLACE " " ";" deps ${deps} )
-      #look for dependencies that haven't been sorted yet
-      foreach( dep ${deps} )
-        list( FIND UNSORTED ${dep} index )
-        if( index GREATER -1 )
-          #module has dependency that hasn't been listed before it
-          set( nodeps FALSE )
-          break()
+    #loop until there are no modules left in UNSORTED
+    set( addedmodule FALSE )
+    foreach( module ${UNSORTED} )
+        # get dependency list
+        file( STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/${module}/CMakeLists.txt" deps REGEX ".* DEPENDENCIES.*" )
+
+        # check if dependencies (if they exist) have already been listed
+        set( nodeps TRUE )
+        if( NOT( deps STREQUAL "") )
+            string( REPLACE " " ";" deps ${deps} )
+            #look for dependencies that haven't been sorted yet
+            foreach( dep ${deps} )
+                list( FIND UNSORTED ${dep} index )
+                if( index GREATER -1 )
+                    #module has dependency that hasn't been listed before it
+                    set( nodeps FALSE )
+                    break()
+                endif()
+            endforeach()
+        endif() 
+
+        #if module had no dependencies already listed
+        if( nodeps )
+            list( APPEND MODULES ${module} )
+            list( REMOVE_ITEM UNSORTED ${module} )
+            set( addedmodule TRUE )
         endif()
-      endforeach()
-    endif() 
-    
-    #if module had no dependencies already listed
-    if( nodeps )
-      list( APPEND MODULES ${module} )
-      list( REMOVE_ITEM UNSORTED ${module} )
-      set( addedmodule TRUE )
+
+    endforeach() #loop through modules in UNSORTED
+
+    list( LENGTH UNSORTED nleft ) #reset number of UNSORTED left to sort
+
+    # infinite loop prevention
+    #  if nothing was added on this loop, then nothing will be added on next
+    #  loop because conditions didn't change
+    if ( NOT(addedmodule) )
+        message( FATAL_ERROR "Infinite loop when creating module list. Check for circular dependencies in module CMakeLists.txt" )
     endif()
-
-  endforeach() #loop through modules in UNSORTED
-
-  list( LENGTH UNSORTED nleft ) #reset number of UNSORTED left to sort
-
-  # infinite loop prevention
-  #  if nothing was added on this loop, then nothing will be added on next
-  #  loop because conditions didn't change
-  if ( NOT(addedmodule) )
-    message( FATAL_ERROR "Infinite loop when creating module list. Check for circular dependencies in module CMakeLists.txt" )
-  endif()
 
 endwhile() #loop until no modules left in UNSORTED
 
 # build each module in the list
 foreach(module ${MODULES})
-  message(STATUS "Adding module: ${module}")
-  add_subdirectory(${module})
-  if(EXTRA_INC)
-      message(STATUS "Adding include directory: ${EXTRA_INC}")
-      include_directories(${EXTRA_INC}) 
-      unset(EXTRA_INC)
-  endif()
+    message(STATUS "Adding module: ${module}")
+    add_subdirectory(${module})
+    if(EXTRA_INC)
+        message(STATUS "Adding include directory: ${EXTRA_INC}")
+        include_directories(${EXTRA_INC}) 
+        unset(EXTRA_INC)
+    endif()
 endforeach()
 
 # configure scripts and copy to installation dir 
 file(GLOB config_scripts ${CMAKE_CURRENT_SOURCE_DIR}/scripts/*.in)
 foreach(config_script ${config_scripts})
-  string(REPLACE ".in" "" config_script_output ${config_script})
-  get_filename_component(config_script_output ${config_script_output} NAME)
-  configure_file(${config_script} ${CMAKE_CURRENT_BINARY_DIR}/${config_script_output})
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${config_script_output} DESTINATION bin PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    string(REPLACE ".in" "" config_script_output ${config_script})
+    get_filename_component(config_script_output ${config_script_output} NAME)
+    configure_file(${config_script} ${CMAKE_CURRENT_BINARY_DIR}/${config_script_output})
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${config_script_output} DESTINATION bin PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 endforeach()
 
 # install python init file for top-level LDMX module
@@ -181,7 +199,7 @@ if(INSTALL_DOC)
     #if(DOT_EXECUTABLE-NOTFOUND)
     #    message(FATAL_ERROR "The dot executable was not found.")
     #endif()
-    
+
     # configure doxygen file
     configure_file(${PROJECT_SOURCE_DIR}/docs/doxygen.conf.in ${PROJECT_SOURCE_DIR}/docs/doxygen.conf)
 
@@ -196,10 +214,10 @@ endif()
 # option for dumping full CMake env
 option(DUMP_CMAKE_VARIABLES OFF)
 if(DUMP_CMAKE_VARIABLES)
-  get_cmake_property(_variableNames VARIABLES)
-  foreach(_variableName ${_variableNames})
-    message(STATUS "${_variableName}=${${_variableName}}")
-  endforeach()
+    get_cmake_property(_variableNames VARIABLES)
+    foreach(_variableName ${_variableNames})
+        message(STATUS "${_variableName}=${${_variableName}}")
+    endforeach()
 endif()
 
 # info message about install prefix
