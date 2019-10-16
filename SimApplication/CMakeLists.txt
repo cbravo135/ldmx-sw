@@ -3,5 +3,5 @@ module(
   NAME SimApplication
   EXECUTABLES src/ldmx_sim.cxx
   DEPENDENCIES Event Framework DetDescr SimCore SimPlugins Biasing
-  EXTERNAL_DEPENDENCIES Geant4 ROOT GDML LCDD Python
+  EXTERNAL_DEPENDENCIES Geant4 ROOT LCIO GDML LCDD Python
 )

@@ -55,9 +55,18 @@ if(GDML_DIR)
     message(STATUS "GDML library set to: ${GDML_LIBRARY}")
 endif()
 
+# Find LCIO installation
+find_package(LCIO REQUIRED)
+if (LCIO_DIR)
+    message(STATUS "LCIO dir set to: ${LCIO_DIR}")
+    message(STATUS "LCIO include dir set to: ${LCIO_INCLUDE_DIR}")
+    message(STATUS "LCIO library set to: ${LCIO_LIBRARY}")
+endif()
+
+
 # Find LCDD installation
 find_package(LCDD REQUIRED)
-if (LCIO_DIR)
+if (LCDD_DIR)
     message(STATUS "LCDD dir set to: ${LCDD_DIR}")
     message(STATUS "LCDD include dir set to: ${LCDD_INCLUDE_DIR}")
     message(STATUS "LCDD library set to: ${LCDD_LIBRARY}")

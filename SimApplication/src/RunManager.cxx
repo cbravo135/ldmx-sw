@@ -19,6 +19,7 @@
 #include "SimApplication/PrimaryGeneratorMessenger.h"
 #include "SimApplication/RootPersistencyMessenger.h"
 #include "SimApplication/RootPersistencyManager.h" 
+#include "SimApplication/LcioPersistencyManager.h" 
 #include "SimApplication/SteppingAction.h"
 #include "SimApplication/UserEventAction.h"
 #include "SimApplication/UserRunAction.h"
@@ -122,8 +123,10 @@ namespace ldmx {
         SetUserAction(steppingAction);
         SetUserAction(stackingAction);
 
-        RootPersistencyManager* rootIO = new RootPersistencyManager();
-        new RootPersistencyMessenger(rootIO);
+        //RootPersistencyManager* rootIO = new RootPersistencyManager();
+        //new RootPersistencyMessenger(rootIO);
+        LcioPersistencyManager* lcioMgr_ = new LcioPersistencyManager();
+        new LcioPersistencyMessenger(lcioMgr_);
     }
 
     DetectorConstruction* RunManager::getDetectorConstruction() {

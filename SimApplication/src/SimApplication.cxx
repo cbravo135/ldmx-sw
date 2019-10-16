@@ -55,7 +55,7 @@ namespace ldmx {
 
         // Supply default user initializations and actions.
         runManager->SetUserInitialization(new DetectorConstruction(parser));
-        runManager->SetUserInitialization(new LCDDDetectorConstruction());
+        //runManager->SetUserInitialization(new LCDDDetectorConstruction());
         runManager->SetRandomNumberStore(true);
 
         // Initialize G4 visualization framework.

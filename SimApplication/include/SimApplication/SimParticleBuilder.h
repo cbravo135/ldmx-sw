@@ -15,8 +15,15 @@
 #include "SimApplication/Trajectory.h"
 #include "SimApplication/TrajectoryContainer.h"
 
+// LCIO
+#include "EVENT/LCIO.h"
+#include "IMPL/LCEventImpl.h"
+#include "IMPL/LCCollectionVec.h"
+#include "IMPL/MCParticleImpl.h"
+
 // Geant4
 #include "G4Event.hh"
+#include "G4SystemOfUnits.hh"
 
 // STL
 #include <map>
@@ -61,11 +68,31 @@ namespace ldmx {
             void buildSimParticles(Event* outputEvent);
 
             /**
+             * Build SimParticle collection into an output lcio event.
+             * @param outputEvent The output lcio event.
+             */
+            void buildSimParticles(IMPL::LCEventImpl* lcioEvent);
+
+            /**
              * Find a SimParticle by track ID.
              * @param trackID The trackID of the particle.
              */
             SimParticle* findSimParticle(G4int trackID);
 
+            /**
+             * Find a SimParticle by track ID.
+             * @param trackID The trackID of the particle.
+             */
+            IMPL::MCParticleImpl* findLcioParticle(G4int trackID);
+
+            /**
+             * Find a trajectory by its track ID.
+             * If this track ID does not have a trajectory, then the
+             * first trajectory found in its parentage is returned.
+             * @param anEvent The Geant4 event.
+             * @param trackkID The track ID of the trajectory to find.
+             */
+             G4VTrajectory* findTrajectory(G4int trackID){return trackMap_->findTrajectory(trackID);};
         private:
 
             /**
@@ -75,6 +102,12 @@ namespace ldmx {
             void buildSimParticle(Trajectory* info);
 
             /**
+             * Build a LcioParticle from trajectory information.
+             * @param info The trajectory information.
+             */
+            void buildLcioParticle(Trajectory* info);
+
+            /**
              * Build the SimParticle map from the trajectory container.
              * This will create SimParticles without their information filled.
              * @param trajectories The input trajectory container.
@@ -82,10 +115,21 @@ namespace ldmx {
              */
             void buildParticleMap(TrajectoryContainer* trajectories, TClonesArray* simParticleColl);
 
+            /**
+             * Build the SimParticle map from the trajectory container.
+             * This will create SimParticles without their information filled.
+             * @param trajectories The input trajectory container.
+             * @param simParticleColl The output lcio collection vector.
+             */
+            void buildParticleMap(TrajectoryContainer* trajectories, IMPL::LCCollectionVec* collVec);
+
         private:
 
             /** The map of track IDs to SimParticles. */
             SimParticleMap particleMap_;
+
+            /** The map of track IDs to LCIO IMPL::MCParticleImpl*. */
+            std::map<G4int, IMPL::MCParticleImpl*> lcioParticleMap_;
 
             /** The map of tracks to their parent IDs and Trajectory objects. */
             TrackMap* trackMap_;
